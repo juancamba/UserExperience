@@ -5,6 +5,7 @@ using System.Runtime.Intrinsics.X86;
 using UserExperience.Database;
 using UserExperience.Models;
 using UserExperience.Repositories;
+using UserExperience.Services;
 
 namespace UserExperience.Controllers
 {
@@ -16,26 +17,27 @@ namespace UserExperience.Controllers
 
         private readonly IUserRepository _userRepository;
         private readonly IWorkingExperienceRepository _workingExperienceRepository;
-        public UsersController(IUserRepository userRepository, IWorkingExperienceRepository workingExperienceRepository)
+        private readonly InsertUser _insertUser;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public UsersController(IUnitOfWork unitOfWork, InsertUser insertUser)
         {
 
-            _userRepository = userRepository;
-            _workingExperienceRepository = workingExperienceRepository;
+
+            _unitOfWork = unitOfWork;
+            _insertUser = insertUser;
 
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = await _userRepository.GetUsers();
+            var users = await _unitOfWork.UserRepository.GetUsers();
             return Ok(users);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _userRepository.GetById(id);
-
-
-
+            var user = await _unitOfWork.UserRepository.GetById(id);
             if (user == null)
             {
                 return NotFound();
@@ -46,32 +48,10 @@ namespace UserExperience.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(int idUser)
         {
-            User user1 = await _userRepository.GetById(idUser);
-            if (user1 == null)
-            {
-                return NotFound();
-            }
-            List<Workingexperience> workingExperiences1 = new List<Workingexperience>()
-            {
-                        new Workingexperience()
-                {
-                    UserId = user1.Id,
-                    Name = "experience 1",
-                    Details = "details1",
-                    Environment = "environment"
-                },
-                new Workingexperience()
-                {
-                    UserId = user1.Id,
-                    Name = "experience 2",
-                    Details = "details2",
-                    Environment = "environment"
-                }
-            };
 
-            await _workingExperienceRepository.Insert(workingExperiences1);
+            await _insertUser.Execute(idUser);
 
-            return CreatedAtAction("GetUser", new { id = user1.Id }, user1);
+            return Ok("User created!");
         }
 
 

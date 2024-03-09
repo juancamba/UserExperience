@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using UserExperience;
 using UserExperience.Database;
 using UserExperience.Repositories;
+using UserExperience.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +17,15 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWorkingExperienceRepository, WorkingExperienceRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<InsertUser>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 
 var app = builder.Build();
