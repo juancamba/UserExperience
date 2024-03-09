@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Runtime.Intrinsics.X86;
 using UserExperience.Database;
 using UserExperience.Models;
+using UserExperience.Repositories;
 
 namespace UserExperience.Controllers
 {
@@ -11,23 +12,27 @@ namespace UserExperience.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public UsersController(AppDbContext context)
+
+
+        private readonly IUserRepository _userRepository;
+        private readonly IWorkingExperienceRepository _workingExperienceRepository;
+        public UsersController(IUserRepository userRepository, IWorkingExperienceRepository workingExperienceRepository)
         {
-            _context = context;
+
+            _userRepository = userRepository;
+            _workingExperienceRepository = workingExperienceRepository;
+
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _userRepository.GetUsers();
+            return Ok(users);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users
-                .Include(u => u.Wokringexperiences)
-                .FirstOrDefaultAsync(a => a.Id == id);
-
+            var user = await _userRepository.GetById(id);
 
 
 
@@ -41,21 +46,21 @@ namespace UserExperience.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(int idUser)
         {
-            User user1 = await _context.Users.FindAsync(idUser);
+            User user1 = await _userRepository.GetById(idUser);
             if (user1 == null)
             {
                 return NotFound();
             }
-            List<Wokringexperience> workingExperiences1 = new List<Wokringexperience>()
+            List<Workingexperience> workingExperiences1 = new List<Workingexperience>()
             {
-                        new Wokringexperience()
+                        new Workingexperience()
                 {
                     UserId = user1.Id,
                     Name = "experience 1",
                     Details = "details1",
                     Environment = "environment"
                 },
-                new Wokringexperience()
+                new Workingexperience()
                 {
                     UserId = user1.Id,
                     Name = "experience 2",
@@ -64,23 +69,11 @@ namespace UserExperience.Controllers
                 }
             };
 
-            _context.Wokringexperiences.AddRange(workingExperiences1);
-            await _context.SaveChangesAsync();
+            await _workingExperienceRepository.Insert(workingExperiences1);
+
             return CreatedAtAction("GetUser", new { id = user1.Id }, user1);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
 
     }
 }

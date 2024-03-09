@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UserExperience;
 using UserExperience.Database;
+using UserExperience.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 //builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IWorkingExperienceRepository, WorkingExperienceRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

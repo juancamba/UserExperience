@@ -2,7 +2,7 @@
 
 namespace UserExperience.Models
 {
-    public class Wokringexperience
+    public class Workingexperience
     {
         public int Id { get; set; }
 

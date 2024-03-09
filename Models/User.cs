@@ -13,6 +13,6 @@ namespace UserExperience.Models
         [MaxLength(255)]
         public string Direccion { get; set; }
 
-        public ICollection<Wokringexperience> Wokringexperiences { get; set; } // <- this line
+        public ICollection<Workingexperience> Workingexperiences { get; set; } // <- this line
     }
 }
