@@ -16,7 +16,14 @@ namespace UserExperience.Repositories
         }
 
         public async Task<int> Save()
-            => await _context.SaveChangesAsync();
+        {
+
+            // if error occurs, it will throw an exception and the transaction will be rolled back
+
+
+
+            return await _context.SaveChangesAsync();
+        }
 
         public void Dispose()
         {

@@ -1,7 +1,13 @@
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using UserExperience;
 using UserExperience.Database;
+using UserExperience.Middleware;
+using UserExperience.Models;
+using UserExperience.Models.Validations;
 using UserExperience.Repositories;
 using UserExperience.Services;
 
@@ -26,8 +32,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
-
-
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddScoped<IValidator<User>, UserValidator>();
 var app = builder.Build();
 // para correr la migracion
 using (var scope = app.Services.CreateScope())
@@ -35,7 +41,7 @@ using (var scope = app.Services.CreateScope())
     AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     context.Database.Migrate();
 }
-
+app.UseMiddleware<ExceptionMIddleware>();
 //PrepareDb.Population(app);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

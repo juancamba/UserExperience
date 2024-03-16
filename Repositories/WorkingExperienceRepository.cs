@@ -16,7 +16,7 @@ namespace UserExperience.Repositories
         public async Task Insert(List<Workingexperience> workingExperiences)
         {
             await _context.Workingexperiences.AddRangeAsync(workingExperiences);
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
 
         }
 

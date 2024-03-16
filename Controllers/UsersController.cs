@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.Intrinsics.X86;
 using UserExperience.Database;
+using UserExperience.Dto;
 using UserExperience.Models;
 using UserExperience.Repositories;
 using UserExperience.Services;
@@ -46,10 +47,10 @@ namespace UserExperience.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(int idUser)
+        public async Task<ActionResult<User>> PostUser(UserCreate userCreate)
         {
 
-            await _insertUser.Execute(idUser);
+            await _insertUser.Execute(userCreate);
 
             return Ok("User created!");
         }

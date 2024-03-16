@@ -21,6 +21,27 @@ namespace UserExperience.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserSeed());
+
+            modelBuilder.Entity<User>()
+               .Property(u => u.UserName)
+               .IsRequired()
+               .HasMaxLength(50)
+
+               ;
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Web)
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Direccion)
+                .HasMaxLength(255);
         }
+
+
     }
 }

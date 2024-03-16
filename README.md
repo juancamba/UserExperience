@@ -25,6 +25,18 @@ en tu entidad que se llama igual que la tabla donde vas a insertar, por ejemplo,
 lo que hacemos es crear un virtual User, que hace referencia a la entidad de la tabla.
 Esto es una práctica común y el los diferentes ORM saben detectar que el id de User hace referencia a tu UserId.
 
+Agregamos validaciones
+
+Agregamos el servicio de AutoMapper para mapear los objetos de dominio a los objetos de la API
+
+Agregamos Middleware para manejar excepciones
+
+```
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+```
 
 Pero pueden ocurrir referencias circulares. Para evitar esto, debes incluir configuración para el Serializer: 
 ```csharp
